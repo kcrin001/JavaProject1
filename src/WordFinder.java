@@ -34,7 +34,7 @@ public class WordFinder {
     public String convertIntPosToString(int column, int row) {
         String colNum;
         String rowNum;
-        switch(column) {
+        switch (column) {
             case 1:
                 colNum = "a";
                 break;
@@ -54,7 +54,7 @@ public class WordFinder {
                 colNum = null;
         }
         rowNum = String.valueOf(row);
-        if(colNum != null && row < 6 && row > 0)
+        if (colNum != null && row < 6 && row > 0)
             return "&pos=" + colNum + rowNum;
         return "&pos=a0";
     }
@@ -65,14 +65,14 @@ public class WordFinder {
             URL url = new URL(domain);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             int responseCode = urlConnection.getResponseCode();
-            if(responseCode != HttpURLConnection.HTTP_OK)
+            if (responseCode != HttpURLConnection.HTTP_OK)
                 return null;
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line;
-            while((line = bufferedReader.readLine()) != null)
+            while ((line = bufferedReader.readLine()) != null)
                 result.append(line).append("\n");
             bufferedReader.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         return result.toString();
@@ -82,20 +82,25 @@ public class WordFinder {
         String[] readWordsFromWeb = getDataFromDomain("https://wordfinder-001.appspot.com/word.txt").split("\n");
         List<String> words = Arrays.asList(readWordsFromWeb);
         ArrayList<String> letters = new ArrayList<>();
-        for(int col = 1; col < 6; col++) {
-            for(int row = 1; row < 6; row++) {
+        for (int col = 1; col < 6; col++) {
+            for (int row = 1; row < 6; row++) {
                 String letterToAdd;
-                while((letterToAdd = getDataFromDomain("https://wordfinder-001.appspot.com/wordfinder?game=1" + convertIntPosToString(col, row))) == null) {
+                while ((letterToAdd = getDataFromDomain("https://wordfinder-001.appspot.com/wordfinder?game=1" + convertIntPosToString(col, row))) == null) {
                     numAttempts++;
-                    if(numAttempts > 4)
+                    if (numAttempts > 4)
                         System.exit(-1);
                 }
                 letters.add(letterToAdd);
             }
         }
-        for(int y = 1; y < 6; y++) {
-            for(int x = 1; x < 6; x++) {
-
+        for (String word : words) {
+            for (int y = 0; y < 5; y++) {
+                for (int x = 0; x < 5; x++) {
+                    if (letters.get(x + y * 5).equals(word.substring(0, 1))) {
+                        System.out.println(word);
+                        System.out.println(letters.get(x + y * 5));
+                    }
+                }
             }
         }
     }
